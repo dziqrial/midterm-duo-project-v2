@@ -19,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashed = password_hash($pass, PASSWORD_DEFAULT);
 
     // Simpan ke database
-    $sql = "INSERT INTO users (nama, email, password) 
-            VALUES ('$nama', '$email', '$hashed')";
+    $sql = "INSERT INTO users (nama, email, password, role)
+        VALUES ('$nama', '$email', '$hashed', 'user')";
 
     if ($conn->query($sql)) {
         $_SESSION['success'] = "Akun berhasil dibuat, silakan login!";

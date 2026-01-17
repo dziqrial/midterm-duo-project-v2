@@ -1,5 +1,6 @@
 <?php
 session_start();
+$isLoggedIn = isset($_SESSION['user_id']);
 ?>
 
 <!DOCTYPE html>
@@ -22,11 +23,15 @@ session_start();
           <li><a href="program.php">Program</a></li>
           <li><a href="edukasi.php">Edukasi</a></li>
           <li><a href="kontak.php">Kontak</a></li>
+          <?php if (isset($_SESSION['user_id']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+          <li><a href="admin_anggota.php">Anggota Komunitas</a></li>
+          <?php endif; ?>
+
           <?php if (isset($_SESSION['user_id'])): ?>
           <span style="color: white;">Halo, <?= $_SESSION['nama']; ?></span>
-          <a href="logout.php">Logout</a>
+          <li><a href="logout.php">Logout</a></li>
           <?php else: ?>
-          <a href="login.php">Login</a>
+          <li><a href="login.php">Login</a></li>
           <?php endif; ?>
         </ul>
 
@@ -46,6 +51,9 @@ session_start();
         <a href="program.php">Program</a>
         <a href="edukasi.php">Edukasi</a>
         <a href="kontak.php">Kontak</a>
+        <?php if (isset($_SESSION['user_id']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+        <a href="admin_anggota.php">Anggota Komunitas</a>
+        <?php endif; ?>
         <?php if (isset($_SESSION['user_id'])): ?>
         <span>Halo, <?= $_SESSION['nama']; ?></span>
         <a href="logout.php">Logout</a>
@@ -74,8 +82,8 @@ session_start();
             </p>
 
             <div class="loginDaftar-buttons">
-              <a href="daftar.php" class="btn-daftar">Gabung Sekarang</a>
-              <a href="login.php" class="btn-login">Login</a>
+              <a href="daftar.php" class="btn-daftar" >Gabung Sekarang</a>
+              <a href="login.php" class="btn-login" >Login</a>
             </div>
           </div>
 

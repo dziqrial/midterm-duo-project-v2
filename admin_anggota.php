@@ -1,15 +1,20 @@
 <?php
-session_start();
+
+require 'admin_guard.php';
+require 'koneksi.php';
+
+$sql = "SELECT id, nama, email, role FROM users ORDER BY id DESC";
+$res = $conn->query($sql);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kontak & Sosial Media</title>
+    <title>Daftar Anggota</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-
   <body>
     <header>
       <nav class="navbar">
@@ -62,48 +67,33 @@ session_start();
       </div>
     </header>
 
-    <main class="kontak">
-      <section class="konten-kontak">
-        <article class="deskripsi-kontak fade-in slide-right">
-          <h1 class="title-anim slide-left">KONTAK & SOSIAL MEDIA</h1>
-          <p>
-            Hubungi kami untuk informasi kegiatan, kolaborasi, edukasi
-            lingkungan, atau pengelolaan sampah. Kami siap terhubung dengan
-            masyarakat dan mitra yang ingin bergerak bersama dalam menjaga
-            lingkungan.
-          </p>
+    <main class="beranda">
+        <h2 style="text-align: left; margin-bottom: 10px; margin-left: 10px;">Daftar Anggota (Admin)</h2>
 
-          <h2>Kontak Utama</h2>
-          <ul>
-            <li><b>WhatsApp Admin:</b> 0823-6453-8989</li>
-            <li><b>Email:</b> tarunadayavarna@gmail.com</li>
-            <li>
-              <b>Alamat:</b> RW 03 — Desa/Kelurahan Ciranjang, Kecamatan
-              Ciranjang
-            </li>
-          </ul>
+        <table border="1" cellpadding="8" cellspacing="0" style="margin-left: 10px;">
+        <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Role</th>
+        </tr>
 
-          <h2>Media Sosial</h2>
-          <ul>
-            <li>Instagram: @tarunadaya_varna</li>
-            <li>Facebook: Tarunadaya Varna</li>
-            <li>YouTube: Tarunadaya Varna Official</li>
-          </ul>
+        <?php while ($row = $res->fetch_assoc()): ?>
+            <tr>
+            <td><?= $row['id'] ?></td>
+            <td><?= htmlspecialchars($row['nama']) ?></td>
+            <td><?= htmlspecialchars($row['email']) ?></td>
+            <td><?= htmlspecialchars($row['role']) ?></td>
+            </tr>
+        <?php endwhile; ?>
+        </table>
 
-          <h2>Jam Layanan</h2>
-          <ul>
-            <li>Senin–Jumat: 08.00 – 17.00</li>
-            <li>Sabtu: 09.00 – 12.00</li>
-            <li>Minggu: Libur</li>
-          </ul>
-        </article>
-      </section>
+        <p><a href="index.php">Kembali</a></p>
     </main>
-
     <footer>
       <p class="footerDeskripsi">
-        © 2025 Tarunadaya Varna — Bersama Membangun Lingkungan yang Bersih dan
-        Berkelanjutan
+        © 2025 Tarunadaya Varna — Gerakan Pemuda Peduli Lingkungan — Bersama
+        Membangun Lingkungan yang Bersih dan Berkelanjutan
       </p>
     </footer>
     <script src="script.js"></script>
