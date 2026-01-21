@@ -168,7 +168,8 @@ main {
   }
 }
 .beranda {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url(galeri/beranda.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -178,7 +179,8 @@ main {
 }
 
 .program {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url(galeri/beranda.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -373,7 +375,8 @@ footer {
   margin-left: 50px;
 }
 .edukasi {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url(galeri/beranda.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -385,7 +388,8 @@ footer {
   margin: 20px;
 }
 .edukasi {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url(galeri/beranda.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -397,7 +401,8 @@ footer {
   margin: 20px;
 }
 .kontak {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url(galeri/beranda.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -417,7 +422,8 @@ footer {
 }
 
 .login {
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url(galeri/beranda.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -658,4 +664,10 @@ footer {
   100% {
     transform: translateY(0);
   }
+}
+
+.fototable {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
 }
