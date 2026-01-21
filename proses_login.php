@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // SET SESSION
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['nama']    = $user['nama'];
+            $_SESSION['nama']    = $user['name'];
             $_SESSION['email']   = $user['email'];
             $_SESSION['role']    = $user['role'];
 

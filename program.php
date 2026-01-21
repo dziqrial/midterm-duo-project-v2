@@ -1,5 +1,91 @@
 <?php
 session_start();
+require 'koneksi.php';
+
+function e($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+function is_admin(){
+  return isset($_SESSION['user_id'], $_SESSION['role']) && $_SESSION['role'] === 'admin';
+}
+
+$action = $_GET['action'] ?? 'list';
+
+/* ================= CRUD HANDLER ================= */
+
+// CREATE
+if ($action === 'store' && is_admin() && $_SERVER['REQUEST_METHOD']==='POST') {
+  $nama = trim($_POST['nama_program'] ?? '');
+  $deskripsi = trim($_POST['deskripsi'] ?? '');
+  $status = ($_POST['status'] ?? 'aktif') === 'nonaktif' ? 'nonaktif' : 'aktif';
+
+  $fotoName = null;
+  if (!empty($_FILES['foto']['name'])) {
+    $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+    $fotoName = 'program_' . time() . '.' . $ext;
+    move_uploaded_file($_FILES['foto']['tmp_name'], 'galeri/'.$fotoName);
+  }
+
+  $stmt = $conn->prepare(
+    "INSERT INTO programs (nama_program, deskripsi, status, foto) VALUES (?,?,?,?)"
+  );
+  $stmt->bind_param("ssss", $nama, $deskripsi, $status, $fotoName);
+  $stmt->execute();
+  $stmt->close();
+
+  header("Location: program.php");
+  exit;
+}
+
+// UPDATE
+if ($action === 'update' && is_admin() && $_SERVER['REQUEST_METHOD']==='POST') {
+  $id = (int)$_POST['id'];
+  $nama = trim($_POST['nama_program']);
+  $deskripsi = trim($_POST['deskripsi']);
+  $status = ($_POST['status']==='nonaktif')?'nonaktif':'aktif';
+
+  $fotoSQL = '';
+  if (!empty($_FILES['foto']['name'])) {
+    $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+    $fotoName = 'program_' . time() . '.' . $ext;
+    move_uploaded_file($_FILES['foto']['tmp_name'], 'galeri/'.$fotoName);
+    $fotoSQL = ", foto='$fotoName'";
+  }
+
+  $conn->query(
+    "UPDATE programs SET 
+      nama_program='$nama',
+      deskripsi='$deskripsi',
+      status='$status'
+      $fotoSQL
+     WHERE id=$id"
+  );
+
+  header("Location: program.php");
+  exit;
+}
+
+// DELETE
+if ($action === 'delete' && is_admin()) {
+  $id = (int)$_GET['id'];
+  $conn->query("DELETE FROM programs WHERE id=$id");
+  header("Location: program.php");
+  exit;
+}
+
+// EDIT DATA
+$edit = null;
+if ($action === 'edit' && is_admin()) {
+  $id = (int)$_GET['id'];
+  $q = $conn->query("SELECT * FROM programs WHERE id=$id");
+  $edit = $q->fetch_assoc();
+}
+
+// LIST DATA
+if (is_admin()) {
+  $q = $conn->query("SELECT * FROM programs ORDER BY id ASC");
+} else {
+  $q = $conn->query("SELECT * FROM programs WHERE status='aktif' ORDER BY id ASC");
+}
+$programs = $q->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,56 +146,73 @@ session_start();
         <?php endif; ?>
       </div>
     </header>
-    <main class="program">
-      <section class="konten-program">
-        <div class="program-box fade-in card-premium">
-          <div class="program-left card-premium">
-            <h2 class="program-title title-anim slide-left">
-              PROGRAM TARUNADAYA VARNA
-            </h2>
-            <h3 class="program-sub-title">🌱 1. Program Bank Sampah</h3>
-            <p class="programkerja">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mengajak warga memilah dan
-              menabung sampah anorganik seperti plastik, kertas, dan botol.
-              Sampah yang terkumpul dikelola agar bernilai ekonomis, sekaligus
-              mengurangi volume sampah yang dibuang ke lingkungan.
-            </p>
-            <h3 class="program-sub-title">🐛 2. Program Maggot BSF</h3>
-            <p class="programkerja">
-              &nbsp;&nbsp;&nbsp;Mengolah sampah organik menggunakan larva Black
-              Soldier Fly yang ramah lingkungan dan cepat bekerja. Hasilnya
-              dapat dijadikan pakan ternak serta menghasilkan kasgot sebagai
-              pupuk organik.
-            </p>
-            <h3 class="program-sub-title">
-              🌧️ 3. Program Biopori & Resapan Air
-            </h3>
-            <p class="programkerja">
-              &nbsp;&nbsp;&nbsp;&nbsp;Membuat lubang biopori di titik-titik
-              rawan genangan untuk meningkatkan daya serap tanah. Selain
-              mengurangi banjir, biopori bisa diisi sampah organik sehingga
-              membantu proses pengomposan alami.
-            </p>
-            <h3 class="program-sub-title">🧹 4. Edukasi Lingkungan</h3>
-            <p class="programkerja">
-              &nbsp;&nbsp;&nbsp;Mendorong kebiasaan memilah sampah langsung dari
-              sumbernya, yaitu rumah tangga. Warga diajak memisahkan sampah
-              organik, anorganik bernilai, dan residu agar proses daur ulang
-              lebih mudah dan volume sampah yang berakhir di TPA dapat
-              berkurang.
-            </p>
-          </div>
-          <div class="program-right card-premium">
-            <div class="foto-program grid-fade slide-right">
-              <img src="galeri/program1.webp" class="item1" alt="" />
-              <img src="galeri/program2.webp" class="item2" alt="" />
-              <img src="galeri/program3.webp" class="item3" alt="" />
-              <img src="galeri/program4.webp" class="item4" alt="" />
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+    <main class="login">
+  <section class="konten-login fade-in">
+    <article class="title-login" style="max-width:1100px;">
+      <h1>Manajemen Program</h1>
+
+      <table class="program-table" border="1" cellpadding="10" cellspacing="0" width="100%">
+        <tr>
+          <th>ID</th>
+          <th>Nama Program</th>
+          <th>Deskripsi</th>
+          <th>Status</th>
+          <th>Foto</th>
+          <?php if (is_admin()): ?><th>Aksi</th><?php endif; ?>
+        </tr>
+
+        <?php foreach($programs as $p): ?>
+        <tr>
+          <td><?=e($p['id'])?></td>
+          <td><?=e($p['nama_program'])?></td>
+          <td><?=e($p['deskripsi'])?></td>
+          <td><?=e($p['status'])?></td>
+          <td>
+            <?php if ($p['foto']): ?>
+              <img style="width: 200px; height: 200px;" src="galeri/<?=e($p['foto'])?>">
+            <?php else: ?>
+              <em>Belum ada</em>
+            <?php endif; ?>
+          </td>
+          <?php if (is_admin()): ?>
+          <td>
+            <a href="program.php?action=edit&id=<?=$p['id']?>">Edit</a> |
+            <a onclick="return confirm('Hapus program?')" href="program.php?action=delete&id=<?=$p['id']?>">Hapus</a>
+          </td>
+          <?php endif; ?>
+        </tr>
+        <?php endforeach; ?>
+      </table>
+
+      <?php if (is_admin()): ?>
+      <hr>
+
+      <h2><?= $edit?'Edit':'Tambah' ?> Program</h2>
+      <form method="POST" enctype="multipart/form-data"
+            action="program.php?action=<?= $edit?'update':'store' ?>">
+        <?php if($edit): ?>
+          <input type="hidden" name="id" value="<?=$edit['id']?>">
+        <?php endif; ?>
+
+        <input type="text" name="nama_program" placeholder="Nama Program"
+               value="<?=e($edit['nama_program']??'')?>" required><br><br>
+
+        <textarea name="deskripsi" placeholder="Deskripsi" required><?=e($edit['deskripsi']??'')?></textarea><br><br>
+
+        <select name="status">
+          <option value="aktif" <?=($edit['status']??'')==='aktif'?'selected':''?>>Aktif</option>
+          <option value="nonaktif" <?=($edit['status']??'')==='nonaktif'?'selected':''?>>Nonaktif</option>
+        </select><br><br>
+
+        <input type="file" name="foto"><br><br>
+
+        <button type="submit"><?= $edit?'Update':'Simpan' ?></button>
+      </form>
+      <?php endif; ?>
+
+    </article>
+  </section>
+</main>
     <footer>
       <p class="footerDeskripsi">
         © 2025 Tarunadaya Varna — Gerakan Pemuda Peduli Lingkungan — Bersama

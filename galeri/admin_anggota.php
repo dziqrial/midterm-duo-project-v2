@@ -1,17 +1,21 @@
 <?php
-require_once 'database.php';
-require_once 'admin_guard.php';
 
-$db=new Database();
-$users=$db->table('users')->get();
+require 'admin_guard.php';
+require 'koneksi.php';
+
+$sql = "SELECT id, nama, email, role FROM users ORDER BY id DESC";
+$res = $conn->query($sql);
 ?>
+
 <!DOCTYPE html>
-<html>
-<head>
-<title>Admin Anggota</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body class="login">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Anggota</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <header>
       <nav class="navbar">
         <div class="logo">
@@ -62,25 +66,36 @@ $users=$db->table('users')->get();
         <?php endif; ?>
       </div>
     </header>
-<main>
-<h2>Data Anggota</h2>
-<table border="1" cellpadding="10" cellspacing="0" width="100%">
-<tr><th>ID</th><th>Nama</th><th>Email</th><th>Role</th></tr>
-<?php foreach($users as $u): ?>
-<tr>
-<td><?=$u['id']?></td>
-<td><?=$u['name']?></td>
-<td><?=$u['email']?></td>
-<td><?=$u['role']?></td>
-</tr>
-<?php endforeach; ?>
-</table>
-</main>
-<footer>
-    <p class="footerDeskripsi">
+
+    <main class="beranda">
+        <h2 style="text-align: left; margin-bottom: 10px; margin-left: 10px;">Daftar Anggota (Admin)</h2>
+
+        <table border="1" cellpadding="8" cellspacing="0" style="margin-left: 10px;">
+        <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Role</th>
+        </tr>
+
+        <?php while ($row = $res->fetch_assoc()): ?>
+            <tr>
+            <td><?= $row['id'] ?></td>
+            <td><?= htmlspecialchars($row['nama']) ?></td>
+            <td><?= htmlspecialchars($row['email']) ?></td>
+            <td><?= htmlspecialchars($row['role']) ?></td>
+            </tr>
+        <?php endwhile; ?>
+        </table>
+
+        <p><a href="index.php">Kembali</a></p>
+    </main>
+    <footer>
+      <p class="footerDeskripsi">
         © 2025 Tarunadaya Varna — Gerakan Pemuda Peduli Lingkungan — Bersama
         Membangun Lingkungan yang Bersih dan Berkelanjutan
-    </p>
-</footer>
-</body>
+      </p>
+    </footer>
+    <script src="script.js"></script>
+  </body>
 </html>
